@@ -14,6 +14,10 @@ public class Graph<N, E> {
         this.edgeSupplier = edgeSupplier;
     }
 
+    public Graph(Builder<N,E> builder) {
+        this(builder.nodeSupplier, builder.edgeSupplier);
+    }
+
     /**
      * Adds a new node to the graph if it doesn't exist
      *
@@ -43,6 +47,10 @@ public class Graph<N, E> {
      * @return the newly created node
      */
     public Node<N> addNode() {
+
+        // check if a node supplier was given
+        if(this.nodeSupplier == null) throw new IllegalStateException("to use addNode() you need to provide a valid node supplier");
+
         return this.addNode(this.nodeSupplier.get());
     }
 
@@ -61,7 +69,7 @@ public class Graph<N, E> {
      * @param node the node of which get the neighbors
      * @return the list of neighbor nodes
      */
-    public List<Node<N>> getNeighbors (Node<N> node) {
+    public List<Node<N>> getNeighbors(Node<N> node) {
         List<Node<N>> neighbors = new ArrayList<>();
 
         // check if the node is on the graph
@@ -152,6 +160,9 @@ public class Graph<N, E> {
      */
     public Edge<E, N> linkNodes(Node<N> node1, Node<N> node2){
 
+        // check if an edge supplier was given
+        if(this.edgeSupplier == null) throw new IllegalStateException("to use linkNodes() you need to provide a valid edge supplier");
+
         // check if both nodes are on the graph
         if(!this.graph.containsKey(node1) || !this.graph.containsKey(node2))
             throw new IllegalArgumentException("Both nodes must be already part of the graph to be able to link them");
@@ -172,5 +183,43 @@ public class Graph<N, E> {
         if(this.graph.containsKey(edge.getNode1())) this.graph.get(edge.getNode1()).remove(edge);
         if(this.graph.containsKey(edge.getNode2())) this.graph.get(edge.getNode2()).remove(edge);
 
+    }
+
+    // BUILDER --------------------------------------------------------------------------
+
+    public static class Builder<N,E> {
+        private Supplier<N> nodeSupplier = null;
+        private Supplier<E> edgeSupplier = null;
+
+        /**
+         * sets graph to have a node supplier
+         *
+         * @param nodeSupplier the supplier for nodes
+         * @return fluently returns itself
+         */
+        public Builder<N,E> withNodeSupplier(Supplier<N> nodeSupplier){
+            this.nodeSupplier = nodeSupplier;
+            return this;
+        }
+
+        /**
+         * sets graph to have an edge supplier
+         *
+         * @param edgeSupplier the supplier for edges
+         * @return fluently returns itself
+         */
+        public Builder<N,E> withEdgeSupplier(Supplier<E> edgeSupplier){
+            this.edgeSupplier = edgeSupplier;
+            return this;
+        }
+
+        /**
+         * create a new Graph object with selected properties
+         *
+         * @return the constructed Graph with selected options
+         */
+        public Graph<N, E> build() {
+            return new Graph<N,E>(this);
+        }
     }
 }
