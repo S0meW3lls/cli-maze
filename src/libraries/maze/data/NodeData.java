@@ -1,4 +1,4 @@
-package libraries.maze;
+package libraries.maze.data;
 
 public class NodeData {
 
