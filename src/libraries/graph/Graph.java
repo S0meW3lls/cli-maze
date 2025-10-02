@@ -70,10 +70,11 @@ public class Graph<N, E> {
      * @return the list of neighbor nodes
      */
     public List<Node<N>> getNeighbors(Node<N> node) {
-        List<Node<N>> neighbors = new ArrayList<>();
 
         // check if the node is on the graph
         if(!this.graph.containsKey(node)) throw new IllegalArgumentException("Given node is not part of the graph");
+
+        List<Node<N>> neighbors = new ArrayList<>();
 
         // cycle all edges of the node and append the 'other' node
         for(Edge<E, N> e : this.graph.get(node)){
@@ -113,6 +114,10 @@ public class Graph<N, E> {
 
         // cycle all nodes of the node1 searching for the second node
         return this.getNeighbors(node1).stream().anyMatch(n -> n == node2);
+    }
+
+    public Set<Node<N>> getNodes() {
+        return this.graph.keySet();
     }
 
     /**
