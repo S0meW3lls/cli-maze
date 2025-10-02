@@ -59,4 +59,12 @@ public enum CLIStyle {
     public String toString() {
         return code;
     }
+
+    public static String apply(CLIStyle... styles) {
+        StringBuilder builder = new StringBuilder();
+        for (CLIStyle style : styles) {
+            builder.append(style.code);
+        }
+        return builder.toString();
+    }
 }
