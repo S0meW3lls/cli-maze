@@ -7,13 +7,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
-import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.Scanner;
 
 public class CLI {
-
-    private static final String PROMPT_SEPARATOR = ": ";
 
     private static final Scanner scanner = new Scanner(System.in);
 
@@ -25,6 +21,10 @@ public class CLI {
         CLI.out(message, false);
     }
 
+    public static void out(StringBuilder builder) {
+        CLI.out(builder.toString());
+    }
+
     /**
      * Prompts the user for a line of text.
      *
@@ -33,7 +33,7 @@ public class CLI {
      * @return The string input by the user.
      */
     public static String input(String prompt, boolean new_line){
-        System.out.print(prompt + CLI.PROMPT_SEPARATOR + (new_line ? "\n" : ""));
+        System.out.print(prompt + (new_line ? "\n" : ""));
         return CLI.scanner.nextLine();
     }
 
@@ -54,8 +54,10 @@ public class CLI {
      * @return The integer input by the user.
      */
     public static int inputNum(String prompt) {
-        System.out.print(prompt+ CLI.PROMPT_SEPARATOR);
-        return CLI.scanner.nextInt();
+        System.out.print(prompt);
+        int n = CLI.scanner.nextInt();
+        CLI.scanner.nextLine();
+        return n;
     }
 
     /**
@@ -66,8 +68,10 @@ public class CLI {
      * @return The double value input by the user.
      */
     public static double inputFlt(String prompt) {
-        System.out.print(prompt+ CLI.PROMPT_SEPARATOR);
-        return CLI.scanner.nextDouble();
+        System.out.print(prompt);
+        double n = CLI.scanner.nextDouble();
+        CLI.scanner.nextLine();
+        return n;
     }
 
     /**
@@ -82,7 +86,7 @@ public class CLI {
         // print prompt
         String y = def ? "Y" : "y";
         String n = !def ? "N" : "n";
-        System.out.printf("%s [%s/%s] %s", prompt, y, n, CLI.PROMPT_SEPARATOR);
+        System.out.printf("%s [%s/%s]", prompt, y, n);
         char r = CLI.scanner.next().toLowerCase().charAt(0);
 
         return r == 'y';
