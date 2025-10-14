@@ -102,6 +102,28 @@ public class Graph<N, E> {
     }
 
     /**
+     * retrieve the complete list of edges connected to the node
+     *
+     * @return the list of edges
+     */
+    public List<Edge<E,N>> getEdges() {
+        return this.graph.values().stream().flatMap(Collection::stream).distinct().toList();
+    }
+
+    /**
+     * Attempt to retrieve the linking node between 2 given nodes
+     *
+     * @param node1 the first node
+     * @param node2 the second node
+     * @return an Optional Edge describing the edge which is linking the 2 given nodes
+     */
+    public Optional<Edge<E, N>> getLinkEdge(Node<N> node1, Node<N> node2) {
+        return this.graph.get(node1).stream()
+                .filter(e -> (e.getNode1() == node1 && e.getNode2() == node2) || (e.getNode2() == node1 && e.getNode1() == node2))
+                .findFirst();
+    }
+
+    /**
      * check if the 2 given nodes are adjacent
      *
      * @param node1 the first node
