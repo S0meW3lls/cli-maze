@@ -42,6 +42,60 @@ public class Maze {
     }
 
     /**
+     * Generate the maze using randomized depth-first search
+     */
+    public void generateWithRDS(){
+
+        // create walls for all roads
+        this.graph.getEdges().forEach(e -> e.getValue().setWall(true));
+
+        // init support stack
+        Stack<Node<NodeData>> stack = new Stack<>();
+
+        // choose a middle top node to the start of the maze
+        Node<NodeData> start = this.graph.getNodes().stream()
+                .filter(n -> n.getValue().getX() == Math.ceilDiv(this.width, 2) && n.getValue().getY() == 0)
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
+
+        // add first node to the stack
+        stack.push(start);
+
+        // keep cycling until stack is empty
+        while(!stack.isEmpty()) {
+
+            // show current state
+            CLI.clear();
+            this.show();
+            try { Thread.sleep(1000 / Maze.CPS); }
+            catch (InterruptedException e) { throw new RuntimeException(e); }
+
+            // get the new node to check and its unvisited neighbors
+            Node<NodeData> node = stack.pop();
+            node.getValue().setTrail(true);
+            List<Node<NodeData>> neighbors = this.graph.getNeighbors(node).stream().filter(n -> !n.getValue().isVisited()).toList();
+
+            // if it has at least 1 unvisited neighbor
+            if(!neighbors.isEmpty()) {
+                // push back current item to the stack to be able to backtrack to it
+                stack.push(node);
+
+                // decide a random neighbor from the list
+                Node<NodeData> selected = neighbors.get((new Random()).nextInt(neighbors.size()));
+
+                // remove wall between the 2 nodes
+                Edge<EdgeData, NodeData> link = this.graph.getLinkEdge(node, selected).orElseThrow(RuntimeException::new);
+                link.getValue().setWall(false);
+
+                // mark new cell as visited and push it to the stack
+                selected.getValue().setVisited(true);
+                node.getValue().setTrail(false);
+                stack.push(selected);
+            }
+        }
+    }
+
+    /**
      * Shows current maze state during algorithm
      */
     public void show(boolean style) {
