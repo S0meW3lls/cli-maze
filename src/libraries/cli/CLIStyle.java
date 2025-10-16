@@ -60,11 +60,12 @@ public enum CLIStyle {
         return code;
     }
 
-    public static String apply(CLIStyle... styles) {
+    public static String apply(String text, CLIStyle... styles) {
         StringBuilder builder = new StringBuilder();
         for (CLIStyle style : styles) {
             builder.append(style.code);
         }
+        builder.append(text).append(CLIStyle.RESET);
         return builder.toString();
     }
 }
