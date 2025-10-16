@@ -86,7 +86,7 @@ public class CLI {
         // print prompt
         String y = def ? "Y" : "y";
         String n = !def ? "N" : "n";
-        System.out.printf("%s [%s/%s]", prompt, y, n);
+        System.out.printf("%s [%s/%s] ", prompt, y, n);
         char r = CLI.scanner.next().toLowerCase().charAt(0);
 
         return r == 'y';
