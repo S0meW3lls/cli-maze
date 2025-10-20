@@ -103,33 +103,33 @@ classDiagram
     }
 
     class Graph {
-        -graph Map
-        -nodeSupplier Supplier
-        -edgeSupplier Supplier
+        -graph Map~Node, List~Edge~~
+        -nodeSupplier Supplier~N~
+        -edgeSupplier Supplier~E~
         +Graph(nodeSupplier, edgeSupplier)
         +Graph(builder)
-        +addNode(node) Node
-        +addNode(data) Node
-        +addNode() Node
+        +addNode(node) Node~N~
+        +addNode(data) Node~N~
+        +addNode() Node~N~
         +removeNode(node) void
-        +getNeighbors(node) List
-        +getEdges(node) List
-        +getEdges() List
-        +getLinkEdge(node1, node2) Optional
+        +getNeighbors(node) List~Node~N~~
+        +getEdges(node) List~Edge~E,N~~
+        +getEdges() List~Edge~E,N~~
+        +getLinkEdge(node1, node2) Optional~Edge~E,N~~
         +areAdjacent(node1, node2) boolean
-        +getNodes() Set
-        +addEdge(edge) Edge
-        +addEdge(node1, node2, data) Edge
-        +linkNodes(node1, node2) Edge
+        +getNodes() Set~Node~N~~
+        +addEdge(edge) Edge~E,N~
+        +addEdge(node1, node2, data) Edge~E,N~
+        +linkNodes(node1, node2) Edge~E,N~
         +removeEdge(edge) void
     }
 
     class Builder {
-        -nodeSupplier Supplier
-        -edgeSupplier Supplier
-        +withNodeSupplier(supplier) Builder
-        +withEdgeSupplier(supplier) Builder
-        +build() Graph
+        -nodeSupplier Supplier~N~
+        -edgeSupplier Supplier~E~
+        +withNodeSupplier(supplier) Builder~N,E~
+        +withEdgeSupplier(supplier) Builder~N,E~
+        +build() Graph~N,E~
     }
 
     class Node {
@@ -141,14 +141,14 @@ classDiagram
 
     class Edge {
         -value T
-        -node1 Node
-        -node2 Node
+        -node1 Node~N~
+        -node2 Node~N~
         +Edge(node1, node2, value)
         +getValue() T
         +setValue(value) void
-        +getNode1() Node
+        +getNode1() Node~N~
         +setNode1(node) void
-        +getNode2() Node
+        +getNode2() Node~N~
         +setNode2(node) void
     }
 
@@ -162,8 +162,8 @@ classDiagram
         -width int
         -height int
         -state String
-        -graph Graph
-        -visualizationMatrix List
+        -graph Graph~NodeData,EdgeData~
+        -visualizationMatrix List~List~Node~NodeData~~~
         +Maze(width, height)
         +generateWithRDS() void
         +show(style) void
@@ -186,14 +186,16 @@ classDiagram
         +STYLE_DEF String
         +STYLE_START String
         +STYLE_END String
-        +STYLE_VIS String
-        +STYLE_TRL String
-        -visited boolean
+        +STYLE_RDS_VIS String
+        +STYLE_RDS_TRL String
+        +STYLE_RDS_HEAD String
         -start boolean
         -end boolean
-        -trail boolean
         -x int
         -y int
+        -rdsVisited boolean
+        -rdsTrail boolean
+        -rdsHead boolean
         +NodeData(x, y)
         +toString() String
         +toString(style) String
@@ -201,14 +203,16 @@ classDiagram
         +isStart() boolean
         +isEnd() boolean
         +setEnd(end) void
-        +isTrail() boolean
-        +setTrail(trail) void
-        +isVisited() boolean
-        +setVisited(visited) void
         +getX() int
         +setX(x) void
         +getY() int
         +setY(y) void
+        +isRDSTrail() boolean
+        +setRDSTrail(trail) void
+        +isRDSVisited() boolean
+        +setRDSVisited(visited) void
+        +isRDSHead() boolean
+        +setRDSHead(head) void
     }
 
     class EdgeData {
