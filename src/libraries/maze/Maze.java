@@ -12,8 +12,12 @@ import java.util.*;
 
 public class Maze {
 
+    /**
+     * number of changes per second
+     */
     private static final int CPS = 10;
 
+    // const used to handle junction char choosing (bitwise operation)
     private static final int NORTH = 1; // 0001
     private static final int SOUTH = 2; // 0010
     private static final int EAST = 4;  // 0100
@@ -64,16 +68,24 @@ public class Maze {
         // keep cycling until stack is empty
         while(!stack.isEmpty()) {
 
+            // get the new node to check and its unvisited neighbors
+            Node<NodeData> node = stack.pop();
+            
+            // clear previous head marking
+            this.graph.getNeighbors(node).forEach(n -> n.getValue().setRDSHead(false));
+            
+            // mark current node as head
+            node.getValue().setRDSHead(true);
+            
             // show current state
             CLI.clear();
             this.show();
             try { Thread.sleep(1000 / Maze.CPS); }
             catch (InterruptedException e) { throw new RuntimeException(e); }
-
-            // get the new node to check and its unvisited neighbors
-            Node<NodeData> node = stack.pop();
-            node.getValue().setTrail(true);
-            List<Node<NodeData>> neighbors = this.graph.getNeighbors(node).stream().filter(n -> !n.getValue().isVisited()).toList();
+            
+            node.getValue().setRDSHead(false);
+            node.getValue().setRDSTrail(true);
+            List<Node<NodeData>> neighbors = this.graph.getNeighbors(node).stream().filter(n -> !n.getValue().isRDSVisited()).toList();
 
             // if it has at least 1 unvisited neighbor
             if(!neighbors.isEmpty()) {
@@ -88,8 +100,8 @@ public class Maze {
                 link.getValue().setWall(false);
 
                 // mark new cell as visited and push it to the stack
-                selected.getValue().setVisited(true);
-                node.getValue().setTrail(false);
+                selected.getValue().setRDSVisited(true);
+                node.getValue().setRDSTrail(false);
                 stack.push(selected);
             }
         }
