@@ -1,4 +1,4 @@
-package libraries.maze.data;
+package libraries.maze;
 
 public class EdgeData {
 

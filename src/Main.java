@@ -1,6 +1,8 @@
 import libraries.cli.CLI;
-import libraries.cli.CLIStyle;
 import libraries.maze.Maze;
+import libraries.maze.generators.rds.EdgeData;
+import libraries.maze.generators.rds.NodeData;
+import libraries.maze.generators.rds.RDSMazeGenerator;
 
 
 public class Main {
@@ -12,20 +14,15 @@ public class Main {
         CLI.clear();
         int height = CLI.inputNum(String.format("Maze height (max: %s) : ", Math.floorDiv(CLI.getHeight(),2) - 10));
 
-        // generate the maze
-        Maze maze = new Maze(width, height);
+        // create a new maze generator
+        RDSMazeGenerator generator = new RDSMazeGenerator(width, height);
 
-        // decide start / end of the maze
-        maze.createEntryPoints();
-
-        // start RDS visualization
-        CLI.clear();
-        maze.generateWithRDS();
+        // start generation
+        Maze<NodeData, EdgeData> maze = generator.start(true);
 
         if(CLI.inputBool("\nShow final result?", true)) {
             CLI.clear();
             maze.show(false);
         }
-
     }
 }
