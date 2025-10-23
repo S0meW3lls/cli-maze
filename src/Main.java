@@ -1,7 +1,7 @@
 import libraries.cli.CLI;
 import libraries.maze.Maze;
-import libraries.maze.generators.rds.EdgeData;
-import libraries.maze.generators.rds.NodeData;
+import libraries.maze.EdgeData;
+import libraries.maze.NodeData;
 import libraries.maze.generators.rds.RDSMazeGenerator;
 
 
@@ -18,11 +18,19 @@ public class Main {
         RDSMazeGenerator generator = new RDSMazeGenerator(width, height);
 
         // start generation
-        Maze<NodeData, EdgeData> maze = generator.start(true);
+        generator.start(true);
 
-        if(CLI.inputBool("\nShow final result?", true)) {
-            CLI.clear();
-            maze.show(false);
-        }
+        if(!CLI.inputBool("\nShow final result?", true)) return;
+
+        Maze<NodeData, EdgeData> maze = generator.getMaze().getNormalized();
+
+        // show final result without extra styles
+        CLI.clear();
+        maze.show();
+
+        if(!CLI.inputBool("\nDo you want to solve the maze?", true))  return;
+
+        // TODO: solve the maze
+
     }
 }

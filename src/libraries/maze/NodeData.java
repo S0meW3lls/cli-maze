@@ -27,6 +27,25 @@ public class NodeData {
 
     }
 
+    // STATIC METHODS ---------------------------------------------------------
+
+    /**
+     * Cast a specific node to a generic node implementation
+     *
+     * @param node the node to cast
+     * @return the base node implementation
+     */
+    public static NodeData getNormalized(NodeData node) {
+
+        // create a base object
+        NodeData n = new NodeData(node.getX(), node.getY());
+        n.start = node.isStart();
+        n.end = node.isEnd();
+
+        // return it
+        return n;
+    }
+
     // GETTERS / SETTERS ------------------------------------------------------
 
     @Override

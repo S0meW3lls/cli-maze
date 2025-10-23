@@ -35,7 +35,7 @@ public class Maze<N extends NodeData, E extends EdgeData> {
     private List<List<Node<N>>> visualizationMatrix;
 
 
-    public Maze(int width, int height, BiFunction<Integer, Integer, N> nodeSupplier, Supplier<E> edgeSupplier) {
+    public Maze(int width, int height, BiFunction<Integer, Integer, N> nodeSupplier, Supplier<E> edgeSupplier, boolean deferInit) {
 
         // pre checks
         if (width <= 0) throw new IllegalArgumentException("width must be greater than zero");
@@ -50,7 +50,11 @@ public class Maze<N extends NodeData, E extends EdgeData> {
         this.edgeSupplier = edgeSupplier;
 
         // generate maze graph without data
-        this.initializeEmptyMaze();
+        if(!deferInit) this.initializeEmptyMaze();
+    }
+
+    public Maze(int width, int height, BiFunction<Integer, Integer, N> nodeSupplier, Supplier<E> edgeSupplier) {
+        this(width, height, nodeSupplier, edgeSupplier, false);
     }
 
     /**
@@ -77,6 +81,68 @@ public class Maze<N extends NodeData, E extends EdgeData> {
      * <p>This is a convenience method to call maze visualization applying styles by default</p>
      */
     public void show() { this.show(true);}
+
+    /**
+     * Cast a specif maze to a base maze implementation
+     *
+     * @return the normalized maze
+     */
+    public Maze<NodeData, EdgeData> getNormalized() {
+
+        // retrieve maze graph
+        Graph<N, E> graph = this.graph;
+
+        // create standard objects
+        Maze<NodeData, EdgeData> stdMaze = new Maze<>(this.width, this.height, null, null, true);
+        Graph<NodeData, EdgeData> stdGraph = new Graph.Builder<NodeData, EdgeData>().build();
+
+        // create support data structure
+        Stack<Node<N>> stack = new Stack<>();
+        Set<Node<N>> visited = new HashSet<>();
+
+        // create first node and traverse the given graph with DFS
+        Node<N> first = graph.getNodes().stream().toList().getFirst();
+        stack.push(first);
+
+        while (!stack.isEmpty()) {
+
+            // get the new node to check and its connections
+            Node<N> node = stack.pop();
+
+            if(!visited.contains(node)) {
+
+                // add to visited set the node
+                visited.add(node);
+
+                // getNormalized the node
+                Node<NodeData> stdNode = new Node<>(NodeData.getNormalized(node.getValue()));
+
+                // cycle each edge of the node
+                for(Edge<E,N> e: graph.getEdges(node)){
+                    Node<N> other = e.getNode1() == node ? e.getNode2() : e.getNode1();
+
+                    // getNormalized the other node and add it to graph
+                    Node<NodeData> stdOther = new Node<>(NodeData.getNormalized(other.getValue()));
+
+                    // getNormalized connection between nodes (nodes will be auto added to graph)
+                    stdGraph.addEdge(new Edge<>(
+                            e.getNode1() == node ? stdNode : stdOther,
+                            e.getNode2() == node ? stdNode : stdOther,
+                            EdgeData.getNormalized(e.getValue())
+                    ));
+
+                    // push the new node
+                    stack.push(other);
+                }
+            }
+        }
+
+        // replace graph
+        stdMaze.graph = stdGraph;
+
+        // return base maze
+        return stdMaze;
+    }
 
     // PRIVATE METHODS --------------------------------------------------------
 
@@ -211,18 +277,14 @@ public class Maze<N extends NodeData, E extends EdgeData> {
      *
      * @return the index where to place the start of the maze
      */
-    private int getStartIndex() {
-        return 1;
-    }
+    private int getStartIndex() { return 1; }
 
     /**
      * decide the index where to place the end of the maze
      *
      * @return the index where to place the end of the maze
      */
-    private int getEndIndex() {
-        return this.width - 2;
-    }
+    private int getEndIndex() { return this.width - 2; }
 
     /**
      * Initialize an empty graph containing
@@ -305,9 +367,5 @@ public class Maze<N extends NodeData, E extends EdgeData> {
 
     public Graph<N, E> getGraph() {
         return graph;
-    }
-
-    public void setGraph(Graph<N, E> graph) {
-        this.graph = graph;
     }
 }
