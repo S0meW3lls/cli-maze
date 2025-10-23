@@ -38,7 +38,7 @@ public class NodeData extends libraries.maze.NodeData {
         return this.trail;
     }
 
-    public void setRDSTrail(boolean trail) {
+    public void setTrail(boolean trail) {
         this.trail = trail;
     }
 

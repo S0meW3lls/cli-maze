@@ -56,7 +56,7 @@ public class RDSMazeGenerator extends MazeGenerator<NodeData, EdgeData> {
             if (visualize) this.show();
 
             node.getValue().setHead(false);
-            node.getValue().setRDSTrail(true);
+            node.getValue().setTrail(true);
             List<Node<NodeData>> neighbors = this.graph.getNeighbors(node).stream().filter(n -> !n.getValue().isVisited()).toList();
 
             // if it has at least 1 unvisited neighbor
@@ -73,7 +73,7 @@ public class RDSMazeGenerator extends MazeGenerator<NodeData, EdgeData> {
 
                 // mark new cell as visited and push it to the stack
                 selected.getValue().setVisited(true);
-                node.getValue().setRDSTrail(false);
+                node.getValue().setTrail(false);
                 stack.push(selected);
             }
         }
