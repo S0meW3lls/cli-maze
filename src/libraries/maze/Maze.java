@@ -131,13 +131,12 @@ public class Maze<N extends NodeData, E extends EdgeData> {
 
                 // add join char
                 if (y < this.height - 1 && x < this.width - 1) {
-
-                    boolean pathUp = northWall != null && northWall.getValue().isWall();
-                    boolean pathLeft = westWall != null && westWall.getValue().isWall();
-                    boolean pathDown = southWall != null && southWall.getValue().isWall();
-                    boolean pathRight = eastWall != null && eastWall.getValue().isWall();
-
-                    char j = Maze.getJunctionChar(pathUp, pathDown, pathRight, pathLeft);
+                    char j = Maze.getJunctionChar(
+                    northWall != null && northWall.getValue().isWall(),
+                    southWall != null && southWall.getValue().isWall(),
+                    eastWall != null && eastWall.getValue().isWall(),
+                    westWall != null && westWall.getValue().isWall()
+                    );
                     divider.append(j);
                 } else if (x < this.width -1) {
                     divider.append("─");
