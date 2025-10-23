@@ -91,10 +91,17 @@ public class Maze<N extends NodeData, E extends EdgeData> {
         for(int y = 0; y < this.height; y++) {
 
             StringBuilder divider = new StringBuilder();
+            Edge<E, N> startWall = y + 1 < this.height ?
+                    this.graph.getLinkEdge(this.visualizationMatrix.get(y).getFirst(), this.visualizationMatrix.get(y + 1).getFirst()).orElse(null)
+                    : null;
+            Edge<E, N> endWall = y + 1 < this.height ?
+                    this.graph.getLinkEdge(this.visualizationMatrix.get(y).getLast(), this.visualizationMatrix.get(y + 1).getLast()).orElse(null)
+                    : null;
 
             // append start of the maze
             builder.append("│");
-            divider.append("│");
+
+            divider.append(startWall != null && startWall.getValue().isWall() ? "├" : "│");
 
             for(int x = 0; x < this.width; x++) {
 
@@ -139,7 +146,8 @@ public class Maze<N extends NodeData, E extends EdgeData> {
 
             // next line both lines;
             builder.append("\n");
-            divider.append("│\n");
+            divider.append(endWall != null && endWall.getValue().isWall() ? "┤" : "│");
+            divider.append("\n");
 
             // append to main object the divider row created by cycling previous nodes if we are not on last row since last row is handled after
             if(y < this.height - 1) builder.append(divider);
