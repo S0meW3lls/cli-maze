@@ -3,6 +3,7 @@ import libraries.maze.Maze;
 import libraries.maze.EdgeData;
 import libraries.maze.NodeData;
 import libraries.maze.generators.rds.RDSMazeGenerator;
+import libraries.maze.solvers.astar.AStarSolver;
 
 
 public class Main {
@@ -20,17 +21,21 @@ public class Main {
         // start generation
         generator.start(true);
 
-        if(!CLI.inputBool("\nShow final result?", true)) return;
-
+        // normalize maze data to default ones
         Maze<NodeData, EdgeData> maze = generator.getMaze().getNormalized();
 
         // show final result without extra styles
-        CLI.clear();
-        maze.show();
+        if(CLI.inputBool("\nShow final result?", true)) {
+            CLI.clear();
+            maze.show();
+        }
 
-        if(!CLI.inputBool("\nDo you want to solve the maze?", true))  return;
+        // start finding a solution
+        if(CLI.inputBool("\nDo you want to solve the maze?", true)) {
+            AStarSolver solver = new AStarSolver(maze);
+            solver.start(true);
+        }
 
-        // TODO: solve the maze
 
     }
 }
