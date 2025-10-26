@@ -8,6 +8,7 @@ import libraries.graph.Node;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Maze<N extends NodeData, E extends EdgeData> {
@@ -83,65 +84,86 @@ public class Maze<N extends NodeData, E extends EdgeData> {
     public void show() { this.show(true);}
 
     /**
+     * retrieve the node acting as start node
+     *
+     * @return the start node
+     */
+    public Node<N> getStartNode() {
+        return this.visualizationMatrix.getFirst().get(this.getStartIndex());
+    }
+
+    /**
+     * retrieve the node acting as end node
+     *
+     * @return the end node
+     */
+    public Node<N> getEndNode() {
+        return this.visualizationMatrix.getLast().get(this.getEndIndex());
+    }
+
+    /**
      * Cast a specif maze to a base maze implementation
      *
+     * <p>this is just sugar dev for {@link #castTo(Function, Function)}
+     * passing base casters </p>
      * @return the normalized maze
      */
     public Maze<NodeData, EdgeData> getNormalized() {
+        return this.castTo(NodeData::getNormalized, EdgeData::getNormalized);
+    }
+
+    /**
+     * Cast a specific maze to a maze of a specified type
+     *
+     * @param nodeConverter a function to convert the node data
+     * @param edgeConverter a function to convert the edge data
+     * @return the caster maze
+     */
+    public <NN extends NodeData, EE extends EdgeData> Maze<NN, EE> castTo( Function<N, NN> nodeConverter, Function<E, EE> edgeConverter ) {
 
         // retrieve maze graph
         Graph<N, E> graph = this.graph;
 
-        // create standard objects
-        Maze<NodeData, EdgeData> stdMaze = new Maze<>(this.width, this.height, null, null, true);
-        Graph<NodeData, EdgeData> stdGraph = new Graph.Builder<NodeData, EdgeData>().build();
+        // create new objects
+        Maze<NN, EE> othMaze = new Maze<>(this.width, this.height, null, null, true);
+        Graph<NN, EE> othGraph = new Graph.Builder<NN, EE>().build();
+        List<List<Node<NN>>> othVisualizationMatrix = new ArrayList<>();
 
         // create support data structure
-        Stack<Node<N>> stack = new Stack<>();
-        Set<Node<N>> visited = new HashSet<>();
+        Map<Node<N>, Node<NN>> nodeMap = new HashMap<>();
 
-        // create first node and traverse the given graph with DFS
-        Node<N> first = graph.getNodes().stream().toList().getFirst();
-        stack.push(first);
+        // Convert all nodes
+        for (List<Node<N>> row : this.visualizationMatrix) {
+            List<Node<NN>> othRow = new ArrayList<>();
+            for (Node<N> nNode : row) {
 
-        while (!stack.isEmpty()) {
+                // parse node
+                Node<NN> othNode = new Node<>(nodeConverter.apply(nNode.getValue()));
 
-            // get the new node to check and its connections
-            Node<N> node = stack.pop();
+                // add to data structures
+                othGraph.addNode(othNode);
+                othRow.add(othNode);
 
-            if(!visited.contains(node)) {
-
-                // add to visited set the node
-                visited.add(node);
-
-                // getNormalized the node
-                Node<NodeData> stdNode = new Node<>(NodeData.getNormalized(node.getValue()));
-
-                // cycle each edge of the node
-                for(Edge<E,N> e: graph.getEdges(node)){
-                    Node<N> other = e.getNode1() == node ? e.getNode2() : e.getNode1();
-
-                    // getNormalized the other node and add it to graph
-                    Node<NodeData> stdOther = new Node<>(NodeData.getNormalized(other.getValue()));
-
-                    // getNormalized connection between nodes (nodes will be auto added to graph)
-                    stdGraph.addEdge(new Edge<>(
-                            e.getNode1() == node ? stdNode : stdOther,
-                            e.getNode2() == node ? stdNode : stdOther,
-                            EdgeData.getNormalized(e.getValue())
-                    ));
-
-                    // push the new node
-                    stack.push(other);
-                }
+                // save to support structure
+                nodeMap.put(nNode, othNode);
             }
+
+            othVisualizationMatrix.add(othRow);
         }
 
-        // replace graph
-        stdMaze.graph = stdGraph;
+        // Convert all edges
+        for (Edge<E, N> sourceEdge : graph.getEdges()) {
+            Node<NN> othNode1 = nodeMap.get(sourceEdge.getNode1());
+            Node<NN> othNode2 = nodeMap.get(sourceEdge.getNode2());
+            othGraph.addEdge(new Edge<>(othNode1, othNode2, edgeConverter.apply(sourceEdge.getValue())));
+        }
 
-        // return base maze
-        return stdMaze;
+        // replace graph and visualization matrix
+        othMaze.graph = othGraph;
+        othMaze.visualizationMatrix = othVisualizationMatrix;
+
+        // return new maze
+        return othMaze;
     }
 
     // PRIVATE METHODS --------------------------------------------------------
