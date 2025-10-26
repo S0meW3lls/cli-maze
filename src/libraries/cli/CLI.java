@@ -1,5 +1,8 @@
 package libraries.cli;
 
+import libraries.cli.menu.Menu;
+import libraries.cli.menu.MenuType;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,6 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class CLI {
@@ -137,6 +141,17 @@ public class CLI {
      */
     public static LocalDate inputDate(String prompt){
         return CLI.inputDate(prompt, false);
+    }
+
+    /**
+     * Shows a menu on CLI screen
+     * @param type the type of menu
+     * @param prompt the initial prompt
+     * @param options the available options
+     * @return the selected option
+     */
+    public static int showMenu(MenuType type, String prompt, List<String> options) {
+        return (new Menu(type, prompt, options)).show();
     }
 
     /**
