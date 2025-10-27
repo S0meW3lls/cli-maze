@@ -1,4 +1,4 @@
-# Maze Generator
+# CLI Maze
 
 A Java-based CLI application for visualizing maze generation and solving algorithms in real-time, directly in your terminal. This project was developed as an exercise to explore graph theory, advanced algorithms, and clean terminal rendering in Java.
 
@@ -12,237 +12,110 @@ A Java-based CLI application for visualizing maze generation and solving algorit
 ## Preview
 ![preview](./docs/generator-preview.gif)
 
-## How it Works
+## Components
 
-The project is divided into three main components:
+The project has been refactored into a modular and extensible structure, with a clear separation of concerns between the UI, core data structures, and algorithms.
 
-### CLI Management
-The `src/libraries/cli` directory contains all the necessary classes to build and manage the command-line interface. This module is responsible for:
-- Rendering the maze and other UI components in the terminal.
-- Handling user input.
-- Styling the CLI for a better user experience.
+### Main Class
+The application's entry point (`src/Main.java`). It is responsible for:
+- Initializing and displaying the main menu.
+- Managing a map of available generation and solving algorithms.
+- Dynamically loading and executing the chosen algorithm using Java Reflection, making the system easily extensible.
 
-### Graph Representation
-The core data structure of the application resides in the `src/libraries/graph` directory. This module handles:
-- The representation of the maze as a graph.
-- Nodes and Edges of the graph.
-- The underlying data structures for storing the graph.
+### CLI Package (`src/libraries/cli`)
+A comprehensive toolkit for building the command-line interface. Its key responsibilities include:
+- **Global Logo:** Storing the application's logo in a static `CLI.logo` property for consistent branding.
+- **Menu System:** Creating interactive, numbered, or roman-style menus.
+- **User Input:** Handling various types of user input (numbers, booleans, strings).
+- **Styled Output:** Applying colors and styles to text for an enhanced user experience.
 
-### Maze Generation
-The `src/libraries/maze` directory contains the logic for generating the maze. This module handles:
-- The implementation of the Randomized Depth-First Search algorithm.
-- The creation of the maze structure.
-- The visualization of the maze generation process.
+### Graph Package (`src/libraries/graph`)
+Provides a generic and reusable graph data structure, which is the foundation for the maze representation. It consists of `Graph`, `Node`, and `Edge` classes.
 
-## Class Map
-```
-.
-├── run.sh
-├── src
-│   ├── Main.java
-│   └── libraries
-│       ├── cli
-│       │   ├── CLI.java
-│       │   └── CLIStyle.java
-│       ├── graph
-│       │   ├── Edge.java
-│       │   ├── Graph.java
-│       │   └── Node.java
-│       └── maze
-│           ├── Maze.java
-│           └── data
-│               ├── EdgeData.java
-│               └── NodeData.java
-└── README.md
-```
+### Maze Package (`src/libraries/maze`)
+This package contains all the logic related to the maze itself, including its structure, generation, and solving algorithms.
 
-## Class Diagram
+- **Core Maze Structure:**
+  - `Maze`: Represents the maze, built upon the `Graph` data structure. It handles the grid-based visualization.
+  - `NodeData` & `EdgeData`: Store maze-specific data for each node (e.g., coordinates, start/end points) and edge (e.g., if it's a wall).
+
+- **Algorithm Abstractions:**
+  - `MazeGenerator` & `MazeGeneratorInterface`: Define the contract and base implementation for all maze generation algorithms.
+  - `MazeSolver` & `MazeSolverInterface`: Define the contract and base implementation for all maze-solving algorithms.
+
+- **Concrete Algorithms:**
+  - `RDSMazeGenerator`: Implements the **Recursive Backtracking** algorithm (Randomized Depth-First Search) to generate a perfect maze.
+  - `AStarSolver`: Implements the **A*** search algorithm to find the shortest path between two points in the maze.
+
+Each algorithm class contains a static `startUserInteraction()` method, which is responsible for gathering the necessary input from the user before the algorithm runs.
+
+## Architecture Diagram
 ```mermaid
-classDiagram
-    class Main {
-        +main(args) void
-    }
+graph LR
 
-    class CLI {
-        -scanner Scanner
-        +out(message, newline) void
-        +out(message) void
-        +out(builder) void
-        +input(prompt, new_line) String
-        +input(prompt) String
-        +inputNum(prompt) int
-        +inputFlt(prompt) double
-        +inputBool(prompt, def) boolean
-        +inputDate(prompt, nullable) LocalDate
-        +inputDate(prompt) LocalDate
-        +getDimensions() int[]
-        +getWidth() int
-        +getHeight() int
-        +clear() void
-        +stripAnsiCodes(str) String
-        +getVisibleLength(str) int
-    }
+    subgraph "Application"
+        Main
+    end
 
-    class CLIStyle {
-        &lt;&lt;enumeration&gt;&gt;
-        RESET
-        BLACK
-        RED
-        GREEN
-        YELLOW
-        BLUE
-        MAGENTA
-        CYAN
-        WHITE
-        BOLD
-        UNDERLINE
-        ITALIC
-        -code String
-        +toString() String
-        +apply(text, styles) String
-    }
+    subgraph "User Interface Library"
+        CLI
+        CLIBuilder
+        Menu
+    end
 
-    class Graph {
-        -graph Map~Node, List~Edge~~
-        -nodeSupplier Supplier~N~
-        -edgeSupplier Supplier~E~
-        +Graph(nodeSupplier, edgeSupplier)
-        +Graph(builder)
-        +addNode(node) Node~N~
-        +addNode(data) Node~N~
-        +addNode() Node~N~
-        +removeNode(node) void
-        +getNeighbors(node) List~Node~N~~
-        +getEdges(node) List~Edge~E,N~~
-        +getEdges() List~Edge~E,N~~
-        +getLinkEdge(node1, node2) Optional~Edge~E,N~~
-        +areAdjacent(node1, node2) boolean
-        +getNodes() Set~Node~N~~
-        +addEdge(edge) Edge~E,N~
-        +addEdge(node1, node2, data) Edge~E,N~
-        +linkNodes(node1, node2) Edge~E,N~
-        +removeEdge(edge) void
-    }
+    subgraph "Core Data Structures"
+        Maze
+        Graph
+        Node
+        Edge
+    end
 
-    class Builder {
-        -nodeSupplier Supplier~N~
-        -edgeSupplier Supplier~E~
-        +withNodeSupplier(supplier) Builder~N,E~
-        +withEdgeSupplier(supplier) Builder~N,E~
-        +build() Graph~N,E~
-    }
+    subgraph "Algorithm Abstractions"
+        MazeGeneratorInterface
+        MazeGenerator
+        MazeSolverInterface
+        MazeSolver
+    end
 
-    class Node {
-        -value T
-        +Node(value)
-        +getValue() T
-        +setValue(value) void
-    }
+    subgraph "Concrete Algorithms"
+        RDSMazeGenerator
+        AStarSolver
+    end
 
-    class Edge {
-        -value T
-        -node1 Node~N~
-        -node2 Node~N~
-        +Edge(node1, node2, value)
-        +getValue() T
-        +setValue(value) void
-        +getNode1() Node~N~
-        +setNode1(node) void
-        +getNode2() Node~N~
-        +setNode2(node) void
-    }
+    %% Define Styles
+    classDef abstract fill:#e6e6e6,stroke:#333,stroke-dasharray: 5 5;
+    classDef interface fill:#f0f8ff,stroke:#333,stroke-dasharray: 2 2;
+    class MazeGenerator,MazeSolver abstract;
+    class MazeGeneratorInterface,MazeSolverInterface interface;
 
-    class Maze {
-        -CPS int
-        -NORTH int
-        -SOUTH int
-        -EAST int
-        -WEST int
-        -JUNCTION_CHARS char[]
-        -width int
-        -height int
-        -state String
-        -graph Graph~NodeData,EdgeData~
-        -visualizationMatrix List~List~Node~NodeData~~~
-        +Maze(width, height)
-        +generateWithRDS() void
-        +show(style) void
-        +show() void
-        +createEntryPoints() void
-        -generateMazeBody(builder, style) void
-        -generateMazeBottomRow(builder, style) void
-        -generateMazeTopRow(builder, style) void
-        -getStartIndex() int
-        -getEndIndex() int
-        -initializeEmptyMaze() void
-        -getJunctionChar(n, s, e, w) char
-        +getState() String
-        +setState(state) void
-        +getWidth() int
-        +getHeight() int
-    }
+    %% Relationships
+    Main --"Uses"--> CLI
+    CLI --"Builds UI with"--> CLIBuilder
+    CLI --"Creates"--> Menu
 
-    class NodeData {
-        +STYLE_DEF String
-        +STYLE_START String
-        +STYLE_END String
-        +STYLE_RDS_VIS String
-        +STYLE_RDS_TRL String
-        +STYLE_RDS_HEAD String
-        -start boolean
-        -end boolean
-        -x int
-        -y int
-        -rdsVisited boolean
-        -rdsTrail boolean
-        -rdsHead boolean
-        +NodeData(x, y)
-        +toString() String
-        +toString(style) String
-        +setStart(start) void
-        +isStart() boolean
-        +isEnd() boolean
-        +setEnd(end) void
-        +getX() int
-        +setX(x) void
-        +getY() int
-        +setY(y) void
-        +isRDSTrail() boolean
-        +setRDSTrail(trail) void
-        +isRDSVisited() boolean
-        +setRDSVisited(visited) void
-        +isRDSHead() boolean
-        +setRDSHead(head) void
-    }
+    Main --"Dynamically Loads"--> RDSMazeGenerator
+    Main --"Dynamically Loads"--> AStarSolver
 
-    class EdgeData {
-        -wall boolean
-        +isWall() boolean
-        +setWall(wall) void
-    }
+    RDSMazeGenerator --"Implements"--> MazeGenerator
+    MazeGenerator --"Implements"--> MazeGeneratorInterface
+    MazeGenerator --"Produces a"--> Maze
 
-    Main --> CLI
-    Main --> Maze
-    CLI --> CLIStyle
-    Maze --> Graph
-    Maze --> NodeData
-    Maze --> EdgeData
-    Maze --> CLI
-    Maze --> CLIStyle
-    Graph --> Node
-    Graph --> Edge
-    Graph ..> Builder
-    Edge --> Node
-    Node --> NodeData
-    Edge --> EdgeData
+    AStarSolver --"Implements"--> MazeSolver
+    MazeSolver --"Implements"--> MazeSolverInterface
+    MazeSolver --"Solves a"--> Maze
+    AStarSolver --"Uses"--> RDSMazeGenerator
+
+    Maze --"Is composed of a"--> Graph
+    Graph --"Contains"--> Node
+    Graph --"Contains"--> Edge
 ```
 
 ## How to Run
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/Maze-Generator.git
-    cd Maze-Generator
+    git clone https://github.com/S0meW3lls/cli-maze.git
+    cd cli-maze
     ```
 
 2.  **Run the application:**
