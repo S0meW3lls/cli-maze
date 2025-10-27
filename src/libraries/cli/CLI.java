@@ -15,6 +15,18 @@ import java.util.Scanner;
 
 public class CLI {
 
+    public static final String LOGO =
+            (new CLIBuilder())
+            .addRow(CLIStyle.apply(
+                    " ______     __         __     __    __     ______     ______     ______    \n" +
+                            "/\\  ___\\   /\\ \\       /\\ \\   /\\ \"-./  \\   /\\  __ \\   /\\___  \\   /\\  ___\\   \n" +
+                            "\\ \\ \\____  \\ \\ \\____  \\ \\ \\  \\ \\ \\-./\\ \\  \\ \\  __ \\  \\/_/  /__  \\ \\  __\\   \n" +
+                            " \\ \\_____\\  \\ \\_____\\  \\ \\_\\  \\ \\_\\ \\ \\_\\  \\ \\_\\ \\_\\   /\\_____\\  \\ \\_____\\ \n" +
+                            "  \\/_____/   \\/_____/   \\/_/   \\/_/  \\/_/   \\/_/\\/_/   \\/_____/   \\/_____/ \n", CLIStyle.BRIGHT_GREEN))
+            .addRow(CLIStyle.apply("A tool for visualizing maze generation and solving algorithms", CLIStyle.GREEN))
+            .addEmptyRow().addEmptyRow().addEmptyRow()
+            .toString();
+
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void out(String message, boolean newline){

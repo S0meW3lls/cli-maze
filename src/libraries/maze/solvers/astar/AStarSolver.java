@@ -39,9 +39,9 @@ public class AStarSolver extends MazeSolver<NodeData, EdgeData> {
      */
     public static AStarSolver startUserInteraction() {
         CLI.clear();
-        int width = CLI.inputNum(String.format("Maze width (max: %s) : ", Math.floorDiv(CLI.getWidth(), 2) - 10));
-        CLI.clear();
-        int height = CLI.inputNum(String.format("Maze height (max: %s) : ", Math.floorDiv(CLI.getHeight(), 2) - 10));
+        CLI.out(CLI.LOGO);
+        int width = CLI.inputNum(String.format("Maze width (max: %s) : ", Math.floorDiv(CLI.getWidth(), 2)));
+        int height = CLI.inputNum(String.format("Maze height (max: %s) : ", Math.floorDiv(CLI.getHeight(), 2)));
 
         RDSMazeGenerator generator = new RDSMazeGenerator(width, height);
         generator.start(false);

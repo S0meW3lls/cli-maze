@@ -62,6 +62,8 @@ public abstract class MazeGenerator<N extends NodeData, E extends EdgeData> impl
      */
     protected void show(boolean style) {
         CLI.clear();
+        if (CLI.LOGO != null) CLI.out(CLI.LOGO);
+
         this.maze.show(style);
         try {
             Thread.sleep(1000 / MazeGenerator.CPS);

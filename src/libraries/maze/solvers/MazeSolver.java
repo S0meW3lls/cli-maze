@@ -63,6 +63,8 @@ public abstract class MazeSolver<N extends NodeData, E extends EdgeData> impleme
      */
     protected void show(boolean style) {
         CLI.clear();
+        if (CLI.LOGO != null) CLI.out(CLI.LOGO);
+
         this.maze.show(style);
         try {
             Thread.sleep(1000 / MazeSolver.CPS);

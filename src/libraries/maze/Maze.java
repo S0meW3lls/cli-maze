@@ -1,7 +1,6 @@
 package libraries.maze;
 
-import libraries.cli.CLI;
-import libraries.cli.CLIStyle;
+import libraries.cli.CLIBuilder;
 import libraries.graph.Edge;
 import libraries.graph.Graph;
 import libraries.graph.Node;
@@ -66,15 +65,13 @@ public class Maze<N extends NodeData, E extends EdgeData> {
         // init the maze output
         StringBuilder builder = new StringBuilder();
 
-        CLI.out(CLIStyle.apply(String.format("Maze Generator (%dx%d)\n\n", this.height, this.width), CLIStyle.BOLD));
-
         // generate the maze
         this.generateMazeTopRow(builder, style);
         this.generateMazeBody(builder, style);
         this.generateMazeBottomRow(builder, style);
 
-        // output the maze
-        CLI.out(builder);
+        // output the maze centered
+        (new CLIBuilder()).addRow(builder.toString()).show();
     }
 
     /**

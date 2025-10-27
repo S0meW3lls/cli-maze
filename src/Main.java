@@ -29,7 +29,7 @@ public class Main {
     public static void main(String[] args) {
         // show logo
         CLI.clear();
-        showLogo();
+        CLI.out(CLI.LOGO);
 
         // show main menu
         int choice = CLI.showMenu(MenuType.NUMBERED, "Hello! What would you like to do? Choose the option you prefer:", List.of("Generators", "Solvers"));
@@ -42,7 +42,7 @@ public class Main {
      */
     public static void generatorsMenu() {
         CLI.clear();
-        showLogo();
+        CLI.out(CLI.LOGO);
 
         List<String> options = GENERATORS.keySet().stream().toList();
         int choice = CLI.showMenu(MenuType.NUMBERED, "Select a generator:", options);
@@ -55,13 +55,6 @@ public class Main {
             Method start = selected.getMethod("start", boolean.class);
             start.invoke(instance, true);
 
-            if (CLI.inputBool("\nShow final result?", true)) {
-                CLI.clear();
-                Method getMaze = selected.getMethod("getMaze");
-                Maze<?, ?> maze = (Maze<?, ?>) getMaze.invoke(instance);
-                maze.getNormalized().show();
-            }
-
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -73,7 +66,7 @@ public class Main {
      */
     public static void solversMenu() {
         CLI.clear();
-        showLogo();
+        CLI.out(CLI.LOGO);
 
         List<String> options = SOLVERS.keySet().stream().toList();
         int choice = CLI.showMenu(MenuType.NUMBERED, "Select a solver:", options);
@@ -89,26 +82,5 @@ public class Main {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Shows the logo
-     */
-    private static void showLogo() {
-        CLIBuilder builder = new CLIBuilder();
-        builder.addRow(CLIStyle.apply(
-            "    ___       ___       ___       ___       ___       ___       ___   \n" +
-            "   /\\  \\     /\\__\\     /\\  \\     /\\__\\     /\\  \\     /\\  \\     /\\  \\  \n" +
-            "  /::\\  \\   /:/  /    _\\:\\  \\   /::L_L_   /::\\  \\   _\\:\\  \\   /::\\  \\ \n" +
-            " /:/\\:\\__\\ /:/__/    /\\/::\\__\\ /:/L:\\__\\ /::\\:\\__\\ /::::\\__\\ /::\\:\\__\\\n" +
-            " \\:\\ \\/__/ \\:\\  \\    \\::/\\/__/ \\/_/:/  / \\/\\::/  / \\::;;/__/ \\:\\:\\/  /\n" +
-            "  \\:\\__\\    \\:\\__\\    \\:\\__\\     /:/  /    /:/  /   \\:\\__\\    \\:\\/  / \n" +
-            "   \\/__/     \\/__/     \\/__/     \\/__/     \\/__/     \\/__/     \\/__/  \n", CLIStyle.BRIGHT_GREEN)
-        )
-        .addRow(CLIStyle.apply("A tool for visualizing maze generation and solving algorithms", CLIStyle.GREEN))
-        .addEmptyRow()
-        .addEmptyRow()
-        .addEmptyRow()
-        .show();
     }
 }
