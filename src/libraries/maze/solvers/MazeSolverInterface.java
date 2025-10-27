@@ -4,6 +4,13 @@ import libraries.maze.EdgeData;
 import libraries.maze.Maze;
 import libraries.maze.NodeData;
 
+/**
+ * Interface for maze solvers.
+ * <p>
+ * Any class implementing this interface should also provide a static method
+ * {@code public static MazeSolverInterface startUserInteraction()}
+ * that prompts the user for necessary parameters and returns a new instance of the solver.
+ */
 public interface MazeSolverInterface<N extends NodeData, E extends EdgeData> {
 
     /**

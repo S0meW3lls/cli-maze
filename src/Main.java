@@ -2,9 +2,6 @@ import libraries.cli.CLI;
 import libraries.cli.CLIBuilder;
 import libraries.cli.CLIStyle;
 import libraries.cli.menu.MenuType;
-import libraries.maze.Maze;
-import libraries.maze.EdgeData;
-import libraries.maze.NodeData;
 import libraries.maze.generators.rds.RDSMazeGenerator;
 import libraries.maze.solvers.astar.AStarSolver;
 import java.util.List;
@@ -59,12 +56,7 @@ public class Main {
      * Run the RDS generator
      */
     public static void runRDSGenerator() {
-        CLI.clear();
-        int width = CLI.inputNum(String.format("Maze width (max: %s) : ", Math.floorDiv(CLI.getWidth(), 2) - 10));
-        CLI.clear();
-        int height = CLI.inputNum(String.format("Maze height (max: %s) : ", Math.floorDiv(CLI.getHeight(), 2) - 10));
-
-        RDSMazeGenerator generator = new RDSMazeGenerator(width, height);
+        RDSMazeGenerator generator = RDSMazeGenerator.startUserInteraction();
         generator.start(true);
 
         if (CLI.inputBool("\nShow final result?", true)) {
@@ -77,16 +69,7 @@ public class Main {
      * Run A* solver
      */
     public static void runAStarSolver() {
-        CLI.clear();
-        int width = CLI.inputNum(String.format("Maze width (max: %s) : ", Math.floorDiv(CLI.getWidth(), 2) - 10));
-        CLI.clear();
-        int height = CLI.inputNum(String.format("Maze height (max: %s) : ", Math.floorDiv(CLI.getHeight(), 2) - 10));
-
-        RDSMazeGenerator generator = new RDSMazeGenerator(width, height);
-        generator.start(false);
-        Maze<NodeData, EdgeData> maze = generator.getMaze().getNormalized();
-
-        AStarSolver solver = new AStarSolver(maze);
+        AStarSolver solver = AStarSolver.startUserInteraction();
         solver.start(true);
     }
 

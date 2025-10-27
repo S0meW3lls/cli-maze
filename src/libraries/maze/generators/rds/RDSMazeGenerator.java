@@ -1,5 +1,6 @@
 package libraries.maze.generators.rds;
 
+import libraries.cli.CLI;
 import libraries.graph.Edge;
 import libraries.graph.Node;
 import libraries.maze.Maze;
@@ -18,6 +19,20 @@ public class RDSMazeGenerator extends MazeGenerator<NodeData, EdgeData> {
 
         // generate the maze
         this.setMaze(new Maze<>(width, height, NodeData::new, EdgeData::new));
+    }
+
+    /**
+     * Ask for generator essential data and create a new instance of the generator
+     *
+     * @return a new instance of RDSMazeGenerator
+     */
+    public static RDSMazeGenerator startUserInteraction() {
+        CLI.clear();
+        int width = CLI.inputNum(String.format("Maze width (max: %s) : ", Math.floorDiv(CLI.getWidth(), 2) - 10));
+        CLI.clear();
+        int height = CLI.inputNum(String.format("Maze height (max: %s) : ", Math.floorDiv(CLI.getHeight(), 2) - 10));
+
+        return new RDSMazeGenerator(width, height);
     }
 
     /**

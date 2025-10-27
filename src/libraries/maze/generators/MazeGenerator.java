@@ -6,6 +6,13 @@ import libraries.maze.EdgeData;
 import libraries.maze.Maze;
 import libraries.maze.NodeData;
 
+/**
+ * Abstract class for maze generators.
+ * <p>
+ * Any class extending this abstract class should also provide a static method
+ * {@code public static MazeGenerator startUserInteraction()}
+ * that prompts the user for necessary parameters and returns a new instance of the generator.
+ */
 public abstract class MazeGenerator<N extends NodeData, E extends EdgeData> implements MazeGeneratorInterface<N, E> {
 
     /**

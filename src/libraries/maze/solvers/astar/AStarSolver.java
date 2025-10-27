@@ -1,8 +1,10 @@
 package libraries.maze.solvers.astar;
 
+import libraries.cli.CLI;
 import libraries.graph.Edge;
 import libraries.graph.Node;
 import libraries.maze.Maze;
+import libraries.maze.generators.rds.RDSMazeGenerator;
 import libraries.maze.solvers.MazeSolver;
 
 import java.util.*;
@@ -28,6 +30,24 @@ public class AStarSolver extends MazeSolver<NodeData, EdgeData> {
         this.maze = maze.castTo(AStarSolver::castNodeData, AStarSolver::castEdgeData);
         this.graph = this.maze.getGraph();
 
+    }
+
+    /**
+     * Ask for solver essential data and create a new instance of the solver
+     *
+     * @return a new instance of AStarSolver
+     */
+    public static AStarSolver startUserInteraction() {
+        CLI.clear();
+        int width = CLI.inputNum(String.format("Maze width (max: %s) : ", Math.floorDiv(CLI.getWidth(), 2) - 10));
+        CLI.clear();
+        int height = CLI.inputNum(String.format("Maze height (max: %s) : ", Math.floorDiv(CLI.getHeight(), 2) - 10));
+
+        RDSMazeGenerator generator = new RDSMazeGenerator(width, height);
+        generator.start(false);
+        Maze<libraries.maze.NodeData, libraries.maze.EdgeData> maze = generator.getMaze().getNormalized();
+
+        return new AStarSolver(maze);
     }
 
     /**

@@ -5,8 +5,15 @@ import libraries.graph.Graph;
 import libraries.maze.EdgeData;
 import libraries.maze.Maze;
 import libraries.maze.NodeData;
-import libraries.maze.generators.MazeGeneratorInterface;
+import libraries.maze.solvers.MazeSolverInterface;
 
+/**
+ * Abstract class for maze solvers.
+ * <p>
+ * Any class extending this abstract class should also provide a static method
+ * {@code public static MazeSolver startUserInteraction()}
+ * that prompts the user for necessary parameters and returns a new instance of the solver.
+ */
 public abstract class MazeSolver<N extends NodeData, E extends EdgeData> implements MazeSolverInterface<N, E> {
 
     /**
